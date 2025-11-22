@@ -1,0 +1,38 @@
+name: Process Blog Posts
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/content/posts/**'
+  workflow_dispatch:
+
+jobs:
+  process-posts:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install gray-matter reading-time glob
+      
+      - name: Process markdown files
+        run: node scripts/process-posts.js
+      
+      - name: Commit processed posts
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/lib/posts.ts
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: update processed blog posts [skip ci]"
+          git push

@@ -1,24 +1,76 @@
-# Welcome to your Lovable project
+# Minimal Blog App
 
-## Project info
+A clean, minimal blog built with React, TypeScript, and Tailwind CSS. Blog posts are written in Markdown and automatically processed by GitHub Actions.
 
-**URL**: https://lovable.dev/projects/e70cb0d1-c5fe-4be9-8ef0-5705f0668f70
+## Features
 
-## How can I edit this code?
+- ✨ Clean, minimal design based on modern blog aesthetics
+- 📝 Write blog posts in Markdown
+- 🔄 Automatic post processing via GitHub Actions
+- 🔍 Client-side search functionality
+- 🏷️ Category and tag support
+- ⚡ Fast, frontend-only architecture
+- 📱 Fully responsive design
+- 🎨 Syntax highlighting for code blocks
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
+```
+src/
+├── components/
+│   ├── layout/          # Header, Footer, Layout components
+│   ├── blog/            # Blog-specific components
+│   └── ui/              # Reusable UI components (shadcn)
+├── content/
+│   └── posts/           # Markdown blog posts go here
+├── pages/               # Page components
+├── lib/                 # Utilities and processed posts
+└── types/               # TypeScript type definitions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e70cb0d1-c5fe-4be9-8ef0-5705f0668f70) and start prompting.
+scripts/
+└── process-posts.js     # Script to convert markdown to JSON
 
-Changes made via Lovable will be committed automatically to this repo.
+.github/
+└── workflows/
+    └── process-blog-posts.yml  # GitHub Actions workflow
+```
 
-**Use your preferred IDE**
+## Adding New Blog Posts
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Create a new `.md` file in `src/content/posts/`
+2. Add frontmatter at the top:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```markdown
+---
+title: "Your Post Title"
+date: "2024-01-15"
+author: "Your Name"
+category: "Category Name"
+excerpt: "A brief description of your post"
+coverImage: "https://example.com/image.jpg"
+tags: ["tag1", "tag2"]
+---
+
+Your markdown content here...
+```
+
+3. Commit and push to GitHub
+4. The GitHub Action will automatically process the post and update the site
+
+## Technologies Used
+
+- **React** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling with custom design system
+- **React Router** - Client-side routing
+- **React Markdown** - Markdown rendering
+- **gray-matter** - Frontmatter parsing
+- **reading-time** - Reading time calculation
+- **rehype-highlight** - Code syntax highlighting
+- **shadcn/ui** - UI components
+
+## Local Development
 
 Follow these steps:
 
@@ -29,40 +81,42 @@ git clone <YOUR_GIT_URL>
 # Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Step 3: Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Process markdown posts (optional - GitHub Actions will do this automatically)
+node scripts/process-posts.js
+
+# Step 5: Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## GitHub Actions Workflow
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The workflow in `.github/workflows/process-blog-posts.yml` automatically:
+1. Detects new/modified markdown files in `src/content/posts/`
+2. Extracts frontmatter and content
+3. Calculates reading time
+4. Generates `src/lib/posts.ts` with all post data
+5. Commits the changes back to the repository
 
-**Use GitHub Codespaces**
+The workflow runs when:
+- You push changes to markdown files in `src/content/posts/`
+- You manually trigger it from the Actions tab
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
+### Using Lovable
 
 Simply open [Lovable](https://lovable.dev/projects/e70cb0d1-c5fe-4be9-8ef0-5705f0668f70) and click on Share -> Publish.
+
+### Other Options
+
+This is a static site that can also be deployed to:
+- GitHub Pages
+- Netlify
+- Vercel
+- Any static hosting service
 
 ## Can I connect a custom domain to my Lovable project?
 
