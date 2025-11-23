@@ -91,6 +91,19 @@ node scripts/process-posts.js
 npm run dev
 ```
 
+## Docker Development
+
+Run the app in Docker for local development:
+
+```sh
+docker compose up --build
+```
+
+Access at http://localhost:8080
+
+Stop with Ctrl+C or `docker compose down`.
+
+To rebuild: `docker compose up --build`
 ## GitHub Actions Workflow
 
 The workflow in `.github/workflows/process-blog-posts.yml` automatically:
