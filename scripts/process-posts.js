@@ -1,21 +1,21 @@
-const fs = require('fs');
-const path = require('path');
-const matter = require('gray-matter');
-const readingTime = require('reading-time');
-const { glob } = require('glob');
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import matter from 'gray-matter';
+import readingTime from 'reading-time';
+import { glob } from 'glob';
 
 async function processPosts() {
   // Find all markdown files in src/content/posts
   const postFiles = await glob('src/content/posts/**/*.md');
-  
+
   const posts = postFiles.map(filePath => {
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContent);
     const stats = readingTime(content);
-    
+
     // Extract slug from filename
     const slug = path.basename(filePath, '.md');
-    
+
     return {
       slug,
       title: data.title,
@@ -29,10 +29,10 @@ async function processPosts() {
       readingTime: stats.text
     };
   });
-  
+
   // Sort posts by date (newest first)
   posts.sort((a, b) => new Date(b.date) - new Date(a.date));
-  
+
   // Generate TypeScript file
   const output = `import { BlogPost } from "@/types/blog";
 
@@ -53,7 +53,7 @@ export const getAllCategories = (): string[] => {
   return Array.from(new Set(posts.map(post => post.category)));
 };
 `;
-  
+
   fs.writeFileSync('src/lib/posts.ts', output);
   console.log(`✅ Processed ${posts.length} blog posts`);
 }
