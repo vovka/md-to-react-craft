@@ -11,7 +11,7 @@ const Header = () => {
           </Link>
           <div className="flex gap-8">
             <NavLink 
-              to="/blog" 
+              to="/" 
               className="text-foreground hover:text-primary transition-colors"
               activeClassName="text-primary font-medium"
             >
