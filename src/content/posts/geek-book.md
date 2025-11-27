@@ -1,1 +1,1 @@
-Scan files on this projects to understand how it works. then describe it as a blog post. 
+read this file docs/BLOG_ENHANCEMENT_WORKFLOW.md. rework it into a blog post. name file "geek-blog" (not book). 
