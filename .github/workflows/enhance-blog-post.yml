@@ -80,6 +80,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+
 jobs:
   generate-enhancement:
     runs-on: ubuntu-latest
