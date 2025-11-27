@@ -1,4 +1,4 @@
-name: Enhance Blog Post with LLM.
+name: Enhance Blog Post with LLM
 
 on:
   workflow_dispatch:
