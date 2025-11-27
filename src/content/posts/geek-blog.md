@@ -1,3 +1,15 @@
+---
+title: "The Hypothesis Engine: Transforming Raw Information into Scientific Insight"
+date: "2025-11-23"
+author: "Volodymyr Shcherbyna"
+category: "AI Research"
+excerpt: "Formal yet accessible methodology to transform raw information into scientific insight with AI."
+coverImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop"
+tags: ["AI", "LLM", "Research", "Methodology"]
+---
+
+comment for enhancement agent: modify the table above to match this post. the rest is fine, do not change the text. 
+
 # Geek Blog: Revolutionizing Writing with AI and GitHub
 
 In today's fast-paced digital world, blogging has evolved far beyond clunky content management systems. Imagine a sleek, geeky setup where your blog lives as simple Markdown files in a GitHub repository. No databases, no bloated plugins—just pure, version-controlled text that anyone with a text editor can hack on.
