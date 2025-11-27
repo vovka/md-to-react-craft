@@ -1,1 +1,1 @@
-read this file docs/BLOG_ENHANCEMENT_WORKFLOW.md. rework it into a blog post. name file "geek-blog" (not book). 
+read this file docs/BLOG_ENHANCEMENT_WORKFLOW.md. rework it into a blog post. focus only on the idea description. do not write about technical details - how it implemented, how to setup etc. only the idea of blog today stores posts as markdown files at GitHub repo, translates it into html using gh action, another gh action enhances your writings with ai. name file "geek-blog" (not book, that's a mistake). 
