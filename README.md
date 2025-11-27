@@ -123,10 +123,29 @@ The workflow runs when:
 
 Simply open [Lovable](https://lovable.dev/projects/e70cb0d1-c5fe-4be9-8ef0-5705f0668f70) and click on Share -> Publish.
 
+### GitHub Pages
+
+This blog is configured to work with GitHub Pages. To deploy:
+
+1. Go to your repository Settings → Pages
+2. Under "Build and deployment", select "GitHub Actions" as the source
+3. The included workflows will automatically:
+   - Process markdown posts when you push changes
+   - Build and deploy the site to GitHub Pages
+
+**Important for GitHub Pages:**
+- The `404.html` file handles direct URL access (e.g., `/blog/my-post`)
+- If your repo isn't at the root (e.g., `username.github.io/repo-name`), update `vite.config.ts`:
+  ```ts
+  export default defineConfig({
+    base: '/repo-name/',
+    // ... rest of config
+  });
+  ```
+
 ### Other Options
 
 This is a static site that can also be deployed to:
-- GitHub Pages
 - Netlify
 - Vercel
 - Any static hosting service
