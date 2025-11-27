@@ -32,7 +32,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <GitHubPagesRedirect />
         <Routes>
           <Route path="/" element={<Navigate to="/blog" replace />} />
