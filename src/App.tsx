@@ -20,6 +20,7 @@ const GitHubPagesRedirect = () => {
     const redirect = sessionStorage.getItem('redirect');
     if (redirect && redirect !== location.pathname) {
       sessionStorage.removeItem('redirect');
+      console.log('Redirecting to:', redirect);
       navigate(redirect, { replace: true });
     }
   }, [navigate, location.pathname]);
@@ -27,25 +28,30 @@ const GitHubPagesRedirect = () => {
   return null;
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <GitHubPagesRedirect />
-        <Routes>
-          <Route path="/" element={<Navigate to="/blog" replace />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Check for pending redirect before rendering routes
+  const hasPendingRedirect = sessionStorage.getItem('redirect') !== null;
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <GitHubPagesRedirect />
+          <Routes>
+            <Route path="/" element={hasPendingRedirect ? null : <Navigate to="/blog" replace />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
