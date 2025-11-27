@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -243,10 +243,12 @@ async function enhancePosts() {
   }
 
   // Configure OpenRouter (OpenAI-compatible)
-  const model = openai(config.model, {
+  const openrouter = createOpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: config.apiKey,
   });
+
+  const model = openrouter(config.model);
 
   // Get enhancement instructions
   const enhancementInstructions = ENHANCEMENT_PROMPTS[config.enhancementMode] || ENHANCEMENT_PROMPTS.complete;
