@@ -1,11 +1,11 @@
 ---
-title: "The Hypothesis Engine: Transforming Raw Information into Scientific Insight"
-date: "2025-11-23"
+title: "Geek Blog: Revolutionizing Writing with AI and GitHub"
+date: "2025-11-27"
 author: "Volodymyr Shcherbyna"
-category: "AI Research"
-excerpt: "Formal yet accessible methodology to transform raw information into scientific insight with AI."
-coverImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop"
-tags: ["AI", "LLM", "Research", "Methodology"]
+category: "AI"
+excerpt: "Discover how to revolutionize your blogging workflow using Markdown files, GitHub Actions, and AI-powered content enhancement to produce professional-quality posts effortlessly."
+coverImage: "https://images.unsplash.com/photo-1586943759341-be5595944989?w=800&h=600&fit=crop"
+tags: ["AI", "GitHub", "Blogging", "Markdown", "Workflow"]
 ---
 
 comment for enhancement agent: modify the table above to match this post. the rest is fine, do not change the text. 
