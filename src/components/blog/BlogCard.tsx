@@ -9,7 +9,7 @@ interface BlogCardProps {
 const BlogCard = ({ post }: BlogCardProps) => {
   return (
     <article className="group">
-      <Link to={`/blog/${post.slug}`}>
+      <Link to={`/${post.slug}`}>
         <div className="overflow-hidden rounded-lg mb-4">
           <img 
             src={post.coverImage} 
