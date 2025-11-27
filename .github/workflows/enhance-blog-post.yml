@@ -1,0 +1,375 @@
+name: Enhance Blog Post with LLM.
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'OpenRouter model (leave empty for default)'
+        required: false
+        type: string
+        default: ''
+
+      temperature:
+        description: 'Creativity level 0.0-2.0 (leave empty for default: 0.7)'
+        required: false
+        type: string
+        default: ''
+
+      enhancement_mode:
+        description: 'Type of enhancement to perform'
+        required: false
+        type: choice
+        default: 'use_default'
+        options:
+          - use_default
+          - grammar_only
+          - expand
+          - complete
+          - custom
+
+      custom_prompt:
+        description: 'Custom enhancement instructions (only used when mode is "custom")'
+        required: false
+        type: string
+        default: ''
+
+      file_pattern:
+        description: 'File pattern to match (e.g., "draft-*.md") or leave empty for all changed files'
+        required: false
+        type: string
+        default: ''
+
+      specific_file:
+        description: 'Process only this specific file (path from repo root)'
+        required: false
+        type: string
+        default: ''
+
+      output_mode:
+        description: 'How to save enhanced content'
+        required: false
+        type: choice
+        default: 'new_file'
+        options:
+          - new_file
+          - overwrite
+          - commit
+          - artifact
+
+      dry_run:
+        description: 'Preview changes without writing files (logs only)'
+        required: false
+        type: boolean
+        default: false
+
+      max_steps:
+        description: 'Max agent iterations (prevents runaway)'
+        required: false
+        type: string
+        default: ''
+
+      max_files:
+        description: 'Maximum number of files to process'
+        required: false
+        type: string
+        default: ''
+
+      debug_mode:
+        description: 'Enable verbose logging'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  generate-enhancement:
+    runs-on: ubuntu-latest
+    outputs:
+      files_processed: ${{ steps.summary.outputs.files }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for git diff
+
+      - name: Determine final configuration
+        id: config
+        run: |
+          # Model: input > repo var > code default
+          MODEL="${{ inputs.model }}"
+          if [ -z "$MODEL" ]; then
+            MODEL="${{ vars.DEFAULT_MODEL }}"
+            if [ -z "$MODEL" ]; then
+              MODEL="meta-llama/llama-3.1-70b-instruct:free"
+            fi
+          fi
+          echo "model=$MODEL" >> $GITHUB_OUTPUT
+          echo "MODEL=$MODEL" >> $GITHUB_ENV
+
+          # Temperature: input > repo var > code default
+          TEMP="${{ inputs.temperature }}"
+          if [ -z "$TEMP" ]; then
+            TEMP="${{ vars.DEFAULT_TEMPERATURE }}"
+            if [ -z "$TEMP" ]; then
+              TEMP="0.7"
+            fi
+          fi
+          echo "temperature=$TEMP" >> $GITHUB_OUTPUT
+          echo "TEMPERATURE=$TEMP" >> $GITHUB_ENV
+
+          # Enhancement mode: input > repo var > code default
+          MODE="${{ inputs.enhancement_mode }}"
+          if [ "$MODE" = "use_default" ]; then
+            MODE="${{ vars.DEFAULT_ENHANCEMENT_MODE }}"
+            if [ -z "$MODE" ]; then
+              MODE="complete"
+            fi
+          fi
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "ENHANCEMENT_MODE=$MODE" >> $GITHUB_ENV
+
+          # Max steps: input > repo var > code default
+          STEPS="${{ inputs.max_steps }}"
+          if [ -z "$STEPS" ]; then
+            STEPS="${{ vars.DEFAULT_MAX_STEPS }}"
+            if [ -z "$STEPS" ]; then
+              STEPS="10"
+            fi
+          fi
+          echo "max_steps=$STEPS" >> $GITHUB_OUTPUT
+          echo "MAX_STEPS=$STEPS" >> $GITHUB_ENV
+
+          # Max files
+          MAX_FILES="${{ inputs.max_files }}"
+          if [ -z "$MAX_FILES" ]; then
+            MAX_FILES="10"
+          fi
+          echo "MAX_FILES=$MAX_FILES" >> $GITHUB_ENV
+
+          # Other settings
+          echo "FILE_PATTERN=${{ inputs.file_pattern }}" >> $GITHUB_ENV
+          echo "SPECIFIC_FILE=${{ inputs.specific_file }}" >> $GITHUB_ENV
+          echo "OUTPUT_MODE=${{ inputs.output_mode }}" >> $GITHUB_ENV
+          echo "CUSTOM_PROMPT=${{ inputs.custom_prompt }}" >> $GITHUB_ENV
+
+          # Dry run and debug
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "DRY_RUN=true" >> $GITHUB_ENV
+          fi
+          if [ "${{ inputs.debug_mode }}" = "true" ]; then
+            echo "DEBUG=true" >> $GITHUB_ENV
+          fi
+
+      - name: Show configuration
+        run: |
+          echo "## 🔧 Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Model | \`${{ steps.config.outputs.model }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Temperature | \`${{ steps.config.outputs.temperature }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Enhancement Mode | \`${{ steps.config.outputs.mode }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Max Steps | \`${{ steps.config.outputs.max_steps }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Output Mode | \`${{ inputs.output_mode }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry Run | \`${{ inputs.dry_run }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Debug Mode | \`${{ inputs.debug_mode }}\` |" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ inputs.file_pattern }}" ]; then
+            echo "| File Pattern | \`${{ inputs.file_pattern }}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -n "${{ inputs.specific_file }}" ]; then
+            echo "| Specific File | \`${{ inputs.specific_file }}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run enhancement agent
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          echo "## 🤖 Enhancement Agent Output" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          npm run enhance-post 2>&1 | tee agent-output.log
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Find enhanced files
+        id: find-files
+        run: |
+          if [ -d "src/content/posts" ]; then
+            ENHANCED_FILES=$(find src/content/posts -name "*-enhanced.md" 2>/dev/null || echo "")
+            if [ -n "$ENHANCED_FILES" ]; then
+              echo "files<<EOF" >> $GITHUB_OUTPUT
+              echo "$ENHANCED_FILES" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+              echo "count=$(echo "$ENHANCED_FILES" | wc -l)" >> $GITHUB_OUTPUT
+            else
+              echo "files=" >> $GITHUB_OUTPUT
+              echo "count=0" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "files=" >> $GITHUB_OUTPUT
+            echo "count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create preview summary
+        id: summary
+        run: |
+          echo "## 📝 Enhancement Preview" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.find-files.outputs.count }}" = "0" ]; then
+            echo "No enhanced files were created." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          echo "Found ${{ steps.find-files.outputs.count }} enhanced file(s)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Process each enhanced file
+          while IFS= read -r enhanced_file; do
+            if [ -n "$enhanced_file" ]; then
+              # Get original filename
+              original_file="${enhanced_file%-enhanced.md}.md"
+              basename=$(basename "$enhanced_file")
+
+              echo "### 📄 $basename" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+
+              # Show word count comparison if original exists
+              if [ -f "$original_file" ]; then
+                orig_words=$(wc -w < "$original_file")
+                enhanced_words=$(wc -w < "$enhanced_file")
+                diff_words=$((enhanced_words - orig_words))
+
+                echo "**Statistics:**" >> $GITHUB_STEP_SUMMARY
+                echo "- Original: $orig_words words" >> $GITHUB_STEP_SUMMARY
+                echo "- Enhanced: $enhanced_words words" >> $GITHUB_STEP_SUMMARY
+                if [ $diff_words -gt 0 ]; then
+                  echo "- Change: +$diff_words words" >> $GITHUB_STEP_SUMMARY
+                else
+                  echo "- Change: $diff_words words" >> $GITHUB_STEP_SUMMARY
+                fi
+                echo "" >> $GITHUB_STEP_SUMMARY
+
+                # Show diff (limited to avoid huge output)
+                echo "<details><summary>📊 Show Diff</summary>" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "\`\`\`diff" >> $GITHUB_STEP_SUMMARY
+                git diff --no-index "$original_file" "$enhanced_file" | head -n 200 || true
+                echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "</details>" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+
+              # Show enhanced content preview (first 100 lines)
+              echo "<details><summary>✨ Show Enhanced Version</summary>" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`markdown" >> $GITHUB_STEP_SUMMARY
+              head -n 100 "$enhanced_file" >> $GITHUB_STEP_SUMMARY
+              if [ $(wc -l < "$enhanced_file") -gt 100 ]; then
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "... (truncated, download artifact for full content)" >> $GITHUB_STEP_SUMMARY
+              fi
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "</details>" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done <<< "${{ steps.find-files.outputs.files }}"
+
+          echo "files=${{ steps.find-files.outputs.files }}" >> $GITHUB_OUTPUT
+
+      - name: Upload enhanced files as artifacts
+        if: steps.find-files.outputs.count > 0
+        uses: actions/upload-artifact@v4
+        with:
+          name: enhanced-blog-posts
+          path: |
+            src/content/posts/*-enhanced.md
+            agent-output.log
+          retention-days: 7
+
+      - name: Add download instructions
+        if: steps.find-files.outputs.count > 0
+        run: |
+          echo "## 📥 Download" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Enhanced files are available as artifacts above. Download them to review locally." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "If you approve the changes, proceed to the next job. If not, reject and re-run with different parameters." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  review-and-commit:
+    needs: generate-enhancement
+    if: inputs.output_mode == 'commit' && inputs.dry_run == false
+    runs-on: ubuntu-latest
+    environment:
+      name: enhancement-review
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download enhanced files
+        uses: actions/download-artifact@v4
+        with:
+          name: enhanced-blog-posts
+          path: .
+
+      - name: Apply enhancements
+        run: |
+          # Move enhanced files to replace originals or keep as new files
+          for enhanced_file in src/content/posts/*-enhanced.md; do
+            if [ -f "$enhanced_file" ]; then
+              original_file="${enhanced_file%-enhanced.md}.md"
+
+              if [ "${{ inputs.output_mode }}" = "commit" ]; then
+                # In commit mode, we keep -enhanced.md files for review
+                # User can manually rename if they want to replace
+                echo "Keeping enhanced file: $enhanced_file"
+              fi
+            fi
+          done
+
+      - name: Setup git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Commit enhanced posts
+        run: |
+          git add src/content/posts/*-enhanced.md
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "$(cat <<'EOF'
+          chore: enhance blog posts with LLM
+
+          Model: ${{ needs.generate-enhancement.outputs.model }}
+          Mode: ${{ needs.generate-enhancement.outputs.mode }}
+
+          🤖 Generated with LLM enhancement workflow
+          EOF
+          )"
+
+          git push
+
+      - name: Summary
+        run: |
+          echo "## ✅ Changes Committed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Enhanced blog posts have been committed to the branch." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
