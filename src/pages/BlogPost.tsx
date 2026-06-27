@@ -2,6 +2,8 @@ import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { getPostBySlug } from "@/lib/posts";
 import { Badge } from "@/components/ui/badge";
+import MarkdownVideoLink from "@/components/blog/MarkdownVideoLink";
+import MarkdownVideoParagraph from "@/components/blog/MarkdownVideoParagraph";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
@@ -55,16 +57,8 @@ const BlogPost = () => {
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight]}
             components={{
-              a: ({ href, children, ...props }) => (
-                <a
-                  href={href}
-                  target={href?.startsWith('http') ? '_blank' : undefined}
-                  rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  {...props}
-                >
-                  {children}
-                </a>
-              )
+              a: MarkdownVideoLink,
+              p: MarkdownVideoParagraph
             }}
           >
             {post.content}
