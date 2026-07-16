@@ -1,5 +1,5 @@
 ---
-title: Letting ChatGPT Use My Local MCPs
+title: Letting ChatGPT Use My Local Browser Through MCP
 date: '2026-06-27'
 author: Volodymyr Shcherbyna
 category: Artificial Intelligence
