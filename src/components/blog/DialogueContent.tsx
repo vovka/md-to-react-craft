@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import { splitDialogueBlocks } from "@/lib/splitDialogueBlocks";
 import { markdownRemarkPlugins, markdownRehypePlugins, markdownComponents } from "./markdownConfig";
@@ -9,7 +10,7 @@ interface DialogueContentProps {
 }
 
 const DialogueContent = ({ content, showOpponent }: DialogueContentProps) => {
-  const segments = splitDialogueBlocks(content);
+  const segments = useMemo(() => splitDialogueBlocks(content), [content]);
 
   return (
     <>
