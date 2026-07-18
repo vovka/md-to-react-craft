@@ -9,6 +9,9 @@ export interface BlogPost {
   tags: string[];
   content: string;
   readingTime: string;
+  layout?: "default" | "dialogue";
+  primaryAuthor?: string;
+  opponentAuthor?: string;
 }
 
 export interface BlogFrontmatter {
