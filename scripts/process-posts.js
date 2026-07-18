@@ -25,6 +25,9 @@ async function processPosts() {
       excerpt: data.excerpt,
       coverImage: data.coverImage,
       tags: data.tags || [],
+      layout: data.layout || 'default',
+      primaryAuthor: data.primaryAuthor,
+      opponentAuthor: data.opponentAuthor,
       content: content,
       readingTime: stats.text
     };

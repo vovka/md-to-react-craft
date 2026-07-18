@@ -1,16 +1,17 @@
+import { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { getPostBySlug } from "@/lib/posts";
 import { Badge } from "@/components/ui/badge";
-import MarkdownVideoLink from "@/components/blog/MarkdownVideoLink";
-import MarkdownVideoParagraph from "@/components/blog/MarkdownVideoParagraph";
+import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeHighlight from "rehype-highlight";
+import { markdownRemarkPlugins, markdownRehypePlugins, markdownComponents } from "@/components/blog/markdownConfig";
+import DialogueContent from "@/components/blog/DialogueContent";
 import "highlight.js/styles/github.css";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [showOpponent, setShowOpponent] = useState(true);
 
   if (!slug) {
     return <Navigate to="/blog" replace />;
@@ -22,9 +23,11 @@ const BlogPost = () => {
     return <Navigate to="/blog" replace />;
   }
 
+  const isDialogue = post.layout === "dialogue";
+
   return (
     <Layout>
-      <article className="container mx-auto px-4 py-12 max-w-4xl">
+      <article className={`container mx-auto px-4 py-12 ${isDialogue && showOpponent ? "max-w-6xl" : "max-w-4xl"}`}>
         <Badge className="mb-4 bg-primary text-primary-foreground">
           {post.category}
         </Badge>
@@ -46,6 +49,19 @@ const BlogPost = () => {
           <span>{post.readingTime}</span>
         </div>
 
+        {isDialogue && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mb-8"
+            aria-pressed={showOpponent}
+            onClick={() => setShowOpponent((value) => !value)}
+          >
+            {showOpponent ? "Hide second opinion" : "Show second opinion"}
+          </Button>
+        )}
+
         <img
           src={post.coverImage}
           alt={post.title}
@@ -53,16 +69,17 @@ const BlogPost = () => {
         />
 
         <div className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-li:text-foreground prose-a:text-primary">
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
-            components={{
-              a: MarkdownVideoLink,
-              p: MarkdownVideoParagraph
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
+          {isDialogue ? (
+            <DialogueContent content={post.content} showOpponent={showOpponent} />
+          ) : (
+            <ReactMarkdown
+              remarkPlugins={markdownRemarkPlugins}
+              rehypePlugins={markdownRehypePlugins}
+              components={markdownComponents}
+            >
+              {post.content}
+            </ReactMarkdown>
+          )}
         </div>
 
         <div className="mt-8 pt-8 border-t border-border">
