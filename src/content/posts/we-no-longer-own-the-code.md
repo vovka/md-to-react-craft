@@ -45,7 +45,7 @@ When I need deeper insight into a specific subsystem, I ask an agent to generate
 
 ## From Vibe Coding to Architecture‑Driven Development
 
-![Computer screen crowded with lines of code, representing chaotic “vibe coding”.](https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixid=M3w4MzY0NTR8MHwxfHNlYXJjaHwxfHxwcm9ncm1lciUyMG1vbml0b3JpbmclMjBjb2RlfGVufDB8MHx8fDE3ODM5NzYyNDF8MA&ixlib=rb-4.1.0&w=800&h=400&fit=crop)
+![Computer screen crowded with lines of code, representing chaotic “vibe coding”.](https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixid=M3w4MzY0NTR8MHwxfHNlYXJjaHwxfHxwcm9ncmFtbWVyJTIwbW9uaXRvcmluZyUyMGNvZGV8ZW58MHwwfHx8MTc4Mzk3NjI0MXww&ixlib=rb-4.1.0&w=800&h=400&fit=crop)
 
 
 
