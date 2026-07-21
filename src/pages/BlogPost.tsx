@@ -4,6 +4,8 @@ import Layout from "@/components/layout/Layout";
 import { getPostBySlug } from "@/lib/posts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import GiscusComments from "@/components/comments/GiscusComments";
+import { commentsConfig } from "@/config/comments";
 import ReactMarkdown from "react-markdown";
 import { markdownRemarkPlugins, markdownRehypePlugins, markdownComponents } from "@/components/blog/markdownConfig";
 import DialogueContent from "@/components/blog/DialogueContent";
@@ -91,6 +93,13 @@ const BlogPost = () => {
             ))}
           </div>
         </div>
+
+        <GiscusComments
+          enabled={post.commentsEnabled === true}
+          commentId={post.commentId ?? post.slug}
+          slug={post.slug}
+          config={commentsConfig}
+        />
       </article>
     </Layout>
   );
