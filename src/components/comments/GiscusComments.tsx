@@ -1,6 +1,6 @@
-import { useLayoutEffect, useState } from "react";
-import Giscus from "@giscus/react";
-import "./GiscusComments.css";
+import { useLayoutEffect, useState } from 'react';
+import Giscus from '@giscus/react';
+import './GiscusComments.css';
 
 export interface GiscusConfiguration {
   repo: `${string}/${string}`;
@@ -26,7 +26,7 @@ export function GiscusComments({
   config,
 }: GiscusCommentsProps) {
   const [backlinkReady, setBacklinkReady] = useState(false);
-  const configured = Boolean(config.repoId && config.categoryId);
+  const configured = Boolean(config?.repoId && config?.categoryId);
 
   useLayoutEffect(() => {
     if (!enabled || !configured) {
@@ -36,31 +36,31 @@ export function GiscusComments({
     const existingMeta = document.head.querySelector<HTMLMetaElement>(
       GISCUS_BACKLINK_SELECTOR,
     );
-    const previousContent = existingMeta?.getAttribute("content") ?? null;
-    const backlinkMeta = existingMeta ?? document.createElement("meta");
+    const previousContent = existingMeta?.getAttribute('content') ?? null;
+    const backlinkMeta = existingMeta ?? document.createElement('meta');
 
     if (!existingMeta) {
-      backlinkMeta.name = "giscus:backlink";
+      backlinkMeta.name = 'giscus:backlink';
       document.head.appendChild(backlinkMeta);
     }
 
-    const canonicalBaseUrl = config.canonicalBaseUrl.replace(/\/+$/, "");
-    const canonicalSlug = slug.replace(/^\/+/, "");
+    const canonicalBaseUrl = config.canonicalBaseUrl.replace(/\/+$/, '');
+    const canonicalSlug = slug.replace(/^\/+/, '');
     backlinkMeta.content = `${canonicalBaseUrl}/${canonicalSlug}`;
     setBacklinkReady(true);
 
     return () => {
       if (existingMeta) {
         if (previousContent === null) {
-          existingMeta.removeAttribute("content");
+          existingMeta.removeAttribute('content');
         } else {
-          existingMeta.setAttribute("content", previousContent);
+          existingMeta.setAttribute('content', previousContent);
         }
       } else {
         backlinkMeta.remove();
       }
     };
-  }, [configured, config.canonicalBaseUrl, enabled, slug]);
+  }, [configured, config?.canonicalBaseUrl, enabled, slug]);
 
   if (!enabled || !configured) {
     return null;
