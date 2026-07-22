@@ -6,6 +6,7 @@ category: "AI Research"
 excerpt: "Formal yet accessible methodology to transform raw information into scientific insight with AI."
 coverImage: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop"
 tags: ["AI", "LLM", "Research", "Methodology"]
+comments: true
 ---
 
 # The Hypothesis Engine: Transforming Raw Information into Scientific Insight

@@ -6,6 +6,7 @@ category: "AI"
 excerpt: "AI-assisted coding is most effective when driven by high-level design documents and context engineering. Shifting effort from implementation to design yields better results and lets AI handle the detailed code generation."
 coverImage: "https://images.unsplash.com/photo-1554306274-f23873d9a26c?ixid=M3w4MzY0NTR8MHwxfHNlYXJjaHwzfHxBSSUyMGNvZGluZyUyMHNvZnR3YXJlJTIwYXJjaGl0ZWN0dXJlfGVufDB8MHx8fDE3NjQ4MTIzMjh8MA&ixlib=rb-4.1.0&w=800&h=400&fit=crop"
 tags: ["AI", "coding", "design-document", "development"]
+comments: true
 ---
 
 # AI-assisted coding: design-driven workflows and the 4D approach

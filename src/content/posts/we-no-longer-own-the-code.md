@@ -14,6 +14,8 @@ tags:
   - AI-generated code
   - software development
   - documentation
+comments: true
+commentId: we-no-longer-own-the-code
 ---
 
 

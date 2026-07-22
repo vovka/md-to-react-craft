@@ -12,6 +12,8 @@ export interface BlogPost {
   layout?: "default" | "dialogue";
   primaryAuthor?: string;
   opponentAuthor?: string;
+  commentsEnabled?: boolean;
+  commentId?: string;
 }
 
 export interface BlogFrontmatter {
@@ -22,4 +24,6 @@ export interface BlogFrontmatter {
   excerpt: string;
   coverImage: string;
   tags: string[];
+  comments?: boolean;
+  commentId?: string;
 }

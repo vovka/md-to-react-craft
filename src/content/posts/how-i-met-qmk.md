@@ -15,6 +15,7 @@ tags:
   - split keyboard
   - Vial
   - mechanical keyboards
+comments: true
 ---
 
 ## How It All Started: The Motivation
