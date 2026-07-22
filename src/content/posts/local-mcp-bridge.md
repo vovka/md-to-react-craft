@@ -15,6 +15,7 @@ tags:
   - Automation
   - Local Development
   - AI
+comments: true
 ---
 
 What if ChatGPT could access your local browser or files in real-time?

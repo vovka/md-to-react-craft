@@ -6,6 +6,7 @@ category: "AI"
 excerpt: "Discover how to revolutionize your blogging workflow using Markdown files, GitHub Actions, and AI-powered content enhancement to produce professional-quality posts effortlessly."
 coverImage: "https://images.unsplash.com/photo-1586943759341-be5595944989?w=800&h=600&fit=crop"
 tags: ["AI", "GitHub", "Blogging", "Markdown", "Workflow"]
+comments: true
 ---
 
 # Geek Blog: Revolutionizing Writing with AI and GitHub

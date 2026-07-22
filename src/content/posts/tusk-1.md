@@ -14,6 +14,7 @@ tags:
   - desktop interaction
   - productivity
   - Linux
+comments: true
 ---
 
 ## When Coding Became… Talking
