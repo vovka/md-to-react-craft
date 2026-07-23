@@ -1,4 +1,12 @@
-# Minimal Blog App
+# Retired: Minimal Blog App
+
+This repository is retired and preserved as a read-only archive. The production blog now lives in
+[`vovka/my-geek-blog`](https://github.com/vovka/my-geek-blog) and is published at
+[blog.shcherbyna.me](https://blog.shcherbyna.me).
+
+The implementation below documents the former Lovable-based application and is retained for historical reference.
+
+## Former Application
 
 A clean, minimal blog built with React, TypeScript, and Tailwind CSS. Blog posts are written in Markdown and automatically processed by GitHub Actions.
 
