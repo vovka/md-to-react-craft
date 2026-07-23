@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       host: "::",
       port: 8080,
     },
-    plugins: [react(), siteFiles, mode === "development" && componentTagger()].filter(Boolean),
+    plugins: [react(), siteFiles, mcpPlugin(), mode === "development" && componentTagger()].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
