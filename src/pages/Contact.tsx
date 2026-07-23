@@ -10,7 +10,11 @@ const Contact = () => {
             I'd love to hear from you! Whether you have questions, feedback, or just want to connect.
           </p>
           <p className="text-lg">
-            Feel free to reach out through social media or email.
+            Email{" "}
+            <a className="underline" href="mailto:volodymyr@shcherbyna.me">
+              volodymyr@shcherbyna.me
+            </a>
+            .
           </p>
         </div>
       </div>

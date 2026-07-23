@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { getPostBySlug } from "@/lib/posts";
@@ -9,17 +9,20 @@ import { commentsConfig } from "@/config/comments";
 import ReactMarkdown from "react-markdown";
 import { markdownRemarkPlugins, markdownRehypePlugins, markdownComponents } from "@/components/blog/markdownConfig";
 import DialogueContent from "@/components/blog/DialogueContent";
+import { trackDialogueToggle } from "@/analytics/events";
+import { useArticleAnalytics } from "@/hooks/useArticleAnalytics";
 import "highlight.js/styles/github.css";
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const [showOpponent, setShowOpponent] = useState(true);
+  const articleRef = useRef<HTMLElement>(null);
+  const post = slug ? getPostBySlug(slug) : undefined;
+  useArticleAnalytics(articleRef, post?.slug || "", post?.readingTime || "");
 
   if (!slug) {
     return <Navigate to="/blog" replace />;
   }
-
-  const post = getPostBySlug(slug);
 
   if (!post) {
     return <Navigate to="/blog" replace />;
@@ -29,7 +32,10 @@ const BlogPost = () => {
 
   return (
     <Layout>
-      <article className={`container mx-auto px-4 py-12 ${isDialogue && showOpponent ? "max-w-6xl" : "max-w-4xl"}`}>
+      <article
+        ref={articleRef}
+        className={`container mx-auto px-4 py-12 ${isDialogue && showOpponent ? "max-w-6xl" : "max-w-4xl"}`}
+      >
         <Badge className="mb-4 bg-primary text-primary-foreground">
           {post.category}
         </Badge>
@@ -58,7 +64,10 @@ const BlogPost = () => {
             size="sm"
             className="mb-8"
             aria-pressed={showOpponent}
-            onClick={() => setShowOpponent((value) => !value)}
+            onClick={() => setShowOpponent((value) => {
+              trackDialogueToggle(post.slug, !value);
+              return !value;
+            })}
           >
             {showOpponent ? "Hide second opinion" : "Show second opinion"}
           </Button>
