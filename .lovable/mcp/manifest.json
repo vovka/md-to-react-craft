@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "shcherbyna-blog-mcp",
+      "version": "0.1.0",
+      "title": "Volodymyr Shcherbyna's Blog"
+    },
+    "tools": [
+      {
+        "name": "list_posts",
+        "title": "List blog posts",
+        "description": "List all blog posts on Volodymyr Shcherbyna's blog with their slug, title, date, category, excerpt, and tags. Use this to discover posts before calling get_post.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "Optional maximum number of posts to return (most recent first)."
+            },
+            "tag": {
+              "type": "string",
+              "description": "Optional case-insensitive tag filter."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_post",
+        "title": "Get blog post",
+        "description": "Fetch the full markdown content and metadata of a single blog post by its slug. Use list_posts first if you don't know the slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The post slug, e.g. 'local-mcp-bridge'."
+            }
+          },
+          "required": [
+            "slug"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_posts",
+        "title": "Search blog posts",
+        "description": "Full-text search across blog post titles, excerpts, tags, and body content. Returns matching posts ranked by relevance with a short snippet.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Search phrase or keywords."
+            },
+            "limit": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 20,
+              "description": "Max results (default 5)."
+            }
+          },
+          "required": [
+            "query"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
